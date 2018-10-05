@@ -61,7 +61,7 @@ app.get('/scrape', (req, res)=>{
                 .children('a')
                 .text();
 
-            result.url = `https://www.austinchronicle.com${$(element)
+            result.link = `https://www.austinchronicle.com${$(element)
                 .children('a')
                 .attr('href')}`
 
@@ -69,7 +69,7 @@ app.get('/scrape', (req, res)=>{
                 .children('div')
                 .text();
 
-            // console.log(result);
+            console.log(result);
 
             // This is where I'm currently at.
             // Create a new Article using the `result` object built from scraping
@@ -89,6 +89,10 @@ app.get('/scrape', (req, res)=>{
 
     });
 });
+
+
+// Everything below this (except for the port listen function) is still in testing
+
 
 // Route to get all articles from the DB
 app.get('/articles', (req, res)=>{
