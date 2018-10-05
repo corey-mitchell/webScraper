@@ -1,2 +1,8 @@
 # webScraper
-A web app that lets users view and leave comments on the latest news that is scraped from another site.
+
+**webScraper** is an application that scrapes current news articles from *The Austin Chronicle*. The articles are displayed for the user to save, comment or delete for later use. The user will also be given an option to scrape the site again to keep the articles recent.
+
+
+## Author
+
+* **Corey Mitchell** - *Initial work* - (https://github.com/corey-mitchell)
