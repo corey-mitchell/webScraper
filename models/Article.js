@@ -22,6 +22,10 @@ const ArticleSchema = new Schema({
     comment: {
         type: Schema.Types.ObjectId,
         ref: "Comment"
+    },
+    saved: {
+        type: Boolean,
+        default: false
     }
 });
 

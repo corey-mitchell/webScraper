@@ -39,12 +39,10 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 
-// Default route, gets data from db and displays it on screen
-// **Need to look into only having it display a certain number of articles.**
-// **Also set up a 'created at' so that the DB will only grab the most recent articles.**
+// Default/Home route
 app.get('/',(req, res)=>{
-    // Targets all articles in the DB
-    db.Article.find()
+    // Targets all articles in the DB that are NOT saved
+    db.Article.find({saved: false})
         .then((data)=>{
             // Data comes back as an array of objects,
             // I made the variables to target the data I need to pass into handlebars
@@ -67,6 +65,31 @@ app.get('/',(req, res)=>{
             res.json(err);
         });
 });
+
+// Route for saved articles
+app.get('/saved', (req, res)=>{
+    // Targets all articles in the DB the are saved
+    db.Article.find({saved: true})
+        .then((data)=>{
+            // Data comes back as an array of objects,
+            // I made the variables to target the data I need to pass into handlebars
+            const title = data.map((res)=>{return res.title});
+            const link = data.map((res)=>{return res.link});
+            const summary = data.map((res)=>{return res.summary});
+
+            // An object of data to pass to handlebars to use
+            const articleObj = {
+                article: data,
+                title: title,
+                link: link,
+                summary: summary
+            };
+            res.render('saved', articleObj);
+        })
+        .catch((err)=>{
+            res.json(err);
+        });
+})
 
 // Route for scraping website
 app.get('/scrape', (req, res)=>{
