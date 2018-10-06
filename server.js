@@ -39,10 +39,34 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 
-// Default route
+// Default route, gets data from db and displays it on screen
+// **Need to look into only having it display a certain number of articles.**
+// **Also set up a 'created at' so that the DB will only grab the most recent articles.**
 app.get('/',(req, res)=>{
-    res.render('index');
-})
+    // Targets all articles in the DB
+    db.Article.find()
+        .then((data)=>{
+            // Data comes back as an array of objects,
+            // I made the variables to target the data I need to pass into handlebars
+            const title = data.map((res)=>{return res.title});
+            const link = data.map((res)=>{return res.link});
+            const summary = data.map((res)=>{return res.summary});
+
+            // An object of data to pass to handlebars to use
+            const articleObj = {
+                article: data,
+                title: title,
+                link: link,
+                summary: summary
+            };
+
+            // Sends the index.html and the data to populate it
+            res.render('index', articleObj);
+        })
+        .catch((err)=>{
+            res.json(err);
+        });
+});
 
 // Route for scraping website
 app.get('/scrape', (req, res)=>{
@@ -71,6 +95,8 @@ app.get('/scrape', (req, res)=>{
             result.summary = $(element)
                 .children('p')
                 .text();
+
+            // Logs out result to make sure info is correct before adding to DB
             // console.log(result);
 
             // Create a new Article using the `result` object built from scraping
@@ -87,20 +113,6 @@ app.get('/scrape', (req, res)=>{
         // If we were able to successfully scrape and save an article, send a message to the client
         res.send("Scrape Complete");
     });
-});
-
-// Route to get all articles from the DB
-app.get('/articles', (req, res)=>{
-    // Grabs every document in the Articles collection
-    db.Article.find()
-        .then((dbArticle)=>{
-            // If we find articles, they are sent back to the client
-            res.json(dbArticle);
-        })
-        .catch((err)=>{
-            // If an error occurs, send the err to the client instead
-            res.json(err);
-        });
 });
 
 // Route for grabbing a specific article by id, populate it with it's comments
