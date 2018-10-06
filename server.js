@@ -161,24 +161,24 @@ app.get('/scrape', (req, res)=>{
     });
 });
 
-// All this is commented out while I work on other things.
-
 // // Route for grabbing a specific article by id, populate it with it's comments
-// app.get('/articles/:id', (req, res)=>{
-//     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-//     db.Article.findOne({_id: req.params.id})
-//         // ..and populate all of the comments associated with it
-//         .populate("comment")
-//         .then((dbArticle)=>{
-//             // If we find articles, they are sent back to the client with the comments attached
-//             res.json(dbArticle);
-//         })
-//         .catch((err)=>{
-//             // If an error occurs, send the err to the client instead
-//             res.json(err);
-//         });
+app.get('/articles/:id', (req, res)=>{
+    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+    db.Article.findOne({_id: req.params.id})
+        // ..and populate all of the comments associated with it
+        .populate("comment")
+        .then((dbArticle)=>{
+            // If we find articles, they are sent back to the client with the comments attached
+            console.log(dbArticle);
+        })
+        .catch((err)=>{
+            // If an error occurs, send the err to the client instead
+            res.json(err);
+        });
 
-// });
+});
+
+// All this is commented out while I work on other things.
 
 // // Route for saving/updating Article's associated comments
 // app.post('/articles/:id', (req, res)=>{

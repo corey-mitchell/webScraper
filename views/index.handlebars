@@ -37,38 +37,38 @@
 
 {{!-- Article Containers --}}
 <div class="container-fluid article-container">
-    {{!-- If there are no articles then the user is given other options here --}}
-    {{#unless article}}
-        <div class="alert alert-warning text-center">
-            <h4>Uh Oh. Looks like we don't have any new articles.</h4>
-        </div>
-        <div class="card">
-            <div class="card-header text-center">
-                <h3>What Would You Like To Do?</h3>
-            </div>
-            <div class="card-body text-center">
-                <h4>
-                    <a class="scrape-new">Try Scraping New Articles</a>
-                </h4>
-                <h4>
-                    <a href="/saved">Go to Saved Articles</a>
-                </h4>
-            </div>
-        </div>
+  {{!-- If there are no articles then the user is given other options here --}}
+  {{#unless article}}
+    <div class="alert alert-warning text-center">
+      <h4>Uh Oh. Looks like we don't have any new articles.</h4>
+    </div>
+    <div class="card">
+      <div class="card-header text-center">
+        <h3>What Would You Like To Do?</h3>
+      </div>
+      <div class="card-body text-center">
+        <h4>
+          <a class="scrape-new">Try Scraping New Articles</a>
+        </h4>
+        <h4>
+          <a href="/saved">Go to Saved Articles</a>
+        </h4>
+      </div>
+    </div>
     {{/unless}}
 
-    {{!-- Creates a 'Card' for each article --}}
-    {{#each article}}
-        <div class="card">
-            <div class="card-header">
-            <h3>
-                <a class="article-link" target="_blank" rel="noopener noreferrer" href="{{link}}">{{title}}</a>
-                <a class="btn btn-success save" data-id="{{id}}" data-saved="{{saved}}">Save Article</a>
-            </h3>
-            </div>
-            <div class="card-body">{{summary}}</div>
-        </div>
-    {{/each}}
+  {{!-- Creates a 'Card' for each article --}}
+  {{#each article}}
+    <div class="card">
+      <div class="card-header">
+        <h3>
+          <a class="article-link" target="_blank" rel="noopener noreferrer" href="{{link}}">{{title}}</a>
+          <a class="btn btn-success saveArticle" data-id="{{id}}" data-saved="{{saved}}">Save Article</a>
+        </h3>
+      </div>
+      <div class="card-body">{{summary}}</div>
+    </div>
+  {{/each}}
 </div>
 
 {{!-- Footer --}}
