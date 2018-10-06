@@ -46,32 +46,32 @@ app.get('/',(req, res)=>{
 // Scrapes website
 app.get('/scrape', (req, res)=>{
     // Gets HTML body
-    axios.get('https://www.austinchronicle.com/daily/news/').then((response)=>{
+    axios.get('https://www.kxan.com/news/local/austin').then((response)=>{
         // console.log(response.data);
         // Loads cheerio into a shorthand selector
         const $ = cheerio.load(response.data);
 
         // Target specific divs here.
-        $("div.blog-text").each((i, element)=>{
+        $("div.headline-wrapper").each((i, element)=>{
             // Save an empty result object
             let result = {};
 
             // Add the text, link and summary of every article, and save them as properties of the result object
             result.title = $(element)
+                .children('h4')
                 .children('a')
                 .text();
 
-            result.link = `https://www.austinchronicle.com${$(element)
+            result.link = `https://www.kxan.com${$(element)
+                .children('h4')
                 .children('a')
                 .attr('href')}`
 
             result.summary = $(element)
-                .children('div')
+                .children('p')
                 .text();
 
-            // console.log(result);
-
-            // This is where I'm currently at. It works but I need to prevent it from creating dublicate docs.
+            console.log(result);
 
             // Create a new Article using the `result` object built from scraping
             db.Article.create(result)
