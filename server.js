@@ -39,11 +39,12 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 
+// Default route
 app.get('/',(req, res)=>{
     res.render('index');
 })
 
-// Scrapes website
+// Route for scraping website
 app.get('/scrape', (req, res)=>{
     // Gets HTML body
     axios.get('https://www.kxan.com/news/local/austin').then((response)=>{
@@ -51,7 +52,7 @@ app.get('/scrape', (req, res)=>{
         // Loads cheerio into a shorthand selector
         const $ = cheerio.load(response.data);
 
-        // Target specific divs here.
+        // Targets information from website and passes it into the DB. 
         $("div.headline-wrapper").each((i, element)=>{
             // Save an empty result object
             let result = {};
@@ -65,13 +66,12 @@ app.get('/scrape', (req, res)=>{
             result.link = `https://www.kxan.com${$(element)
                 .children('h4')
                 .children('a')
-                .attr('href')}`
+                .attr('href')}`;
 
             result.summary = $(element)
                 .children('p')
                 .text();
-
-            console.log(result);
+            // console.log(result);
 
             // Create a new Article using the `result` object built from scraping
             db.Article.create(result)
@@ -84,16 +84,10 @@ app.get('/scrape', (req, res)=>{
                     return res.json(err);
                 });
         });
-
-        // If we were able to successfully scrape and save an Article, send a message to the client
+        // If we were able to successfully scrape and save an article, send a message to the client
         res.send("Scrape Complete");
-
     });
 });
-
-
-// Everything below this (except for the port listen function) is still in testing
-
 
 // Route to get all articles from the DB
 app.get('/articles', (req, res)=>{
@@ -108,6 +102,8 @@ app.get('/articles', (req, res)=>{
             res.json(err);
         });
 });
+
+// **Below is in testing**
 
 // Route for grabbing a specific article by id, populate it with it's comments
 app.get('/articles/:id', (req, res)=>{
