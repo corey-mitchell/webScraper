@@ -103,13 +103,11 @@ app.get('/articles', (req, res)=>{
         });
 });
 
-// **Below is in testing**
-
 // Route for grabbing a specific article by id, populate it with it's comments
 app.get('/articles/:id', (req, res)=>{
     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
     db.Article.findOne({_id: req.params.id})
-        // ..and populate all of the notes associated with it
+        // ..and populate all of the comments associated with it
         .populate("comment")
         .then((dbArticle)=>{
             // If we find articles, they are sent back to the client with the comments attached
@@ -120,6 +118,24 @@ app.get('/articles/:id', (req, res)=>{
             res.json(err);
         });
 
+});
+
+// Route for saving/updating Article's associated comments
+app.post('/articles/:id', (req, res)=>{
+    db.Comment.create(req.body)
+        .then((dbComment)=>{
+            // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+            // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+            return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
+        })
+        .then((dbArticle)=>{
+            // If we were able to successfully update an Article, send it back to the client
+            res.json(dbArticle);
+        })
+        .catch((err)=>{
+            // If an error occurred, send it to the client
+            res.json(err);
+        });
 });
 
 // Starts the server
