@@ -46,22 +46,27 @@ app.get('/',(req, res)=>{
         .then((data)=>{
             // Data comes back as an array of objects,
             // I made the variables to target the data I need to pass into handlebars
+            const id = data.map((res)=>{return res._id});
             const title = data.map((res)=>{return res.title});
             const link = data.map((res)=>{return res.link});
             const summary = data.map((res)=>{return res.summary});
+            const saved = data.map((res)=>{return res.saved});
 
             // An object of data to pass to handlebars to use
             const articleObj = {
                 article: data,
+                id: id,
                 title: title,
                 link: link,
-                summary: summary
+                summary: summary,
+                saved: saved
             };
 
-            // Sends the index.html and the data to populate it
+            // Sends the index.handlebars file and the data to populate it
             res.render('index', articleObj);
         })
         .catch((err)=>{
+            // If an error occurs, send the err to the client
             res.json(err);
         });
 });
@@ -73,6 +78,7 @@ app.get('/saved', (req, res)=>{
         .then((data)=>{
             // Data comes back as an array of objects,
             // I made the variables to target the data I need to pass into handlebars
+            const id = data.map((res)=>{return res._id});
             const title = data.map((res)=>{return res.title});
             const link = data.map((res)=>{return res.link});
             const summary = data.map((res)=>{return res.summary});
@@ -80,16 +86,33 @@ app.get('/saved', (req, res)=>{
             // An object of data to pass to handlebars to use
             const articleObj = {
                 article: data,
+                id: id,
                 title: title,
                 link: link,
                 summary: summary
             };
+            // Sends the saved.handlebars file and the data to populate it
             res.render('saved', articleObj);
         })
         .catch((err)=>{
+            // If an error occurs, send the err to the client
             res.json(err);
         });
 })
+
+// Route for changing saved state
+app.put('/saved/:id', (req, res)=>{
+    // Targets article by ID then changes saved state to true
+    db.Article.findOneAndUpdate({_id: req.params.id}, {saved: true}, {new: true})
+        .then((dbSaved)=>{
+            // Send article back to the client
+            console.log(dbSaved)
+        })
+        .catch((err)=>{
+            // If an error occurs, send the err to the client
+            res.json(err);
+        });
+});
 
 // Route for scraping website
 app.get('/scrape', (req, res)=>{
@@ -138,40 +161,42 @@ app.get('/scrape', (req, res)=>{
     });
 });
 
-// Route for grabbing a specific article by id, populate it with it's comments
-app.get('/articles/:id', (req, res)=>{
-    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-    db.Article.findOne({_id: req.params.id})
-        // ..and populate all of the comments associated with it
-        .populate("comment")
-        .then((dbArticle)=>{
-            // If we find articles, they are sent back to the client with the comments attached
-            res.json(dbArticle);
-        })
-        .catch((err)=>{
-            // If an error occurs, send the err to the client instead
-            res.json(err);
-        });
+// All this is commented out while I work on other things.
 
-});
+// // Route for grabbing a specific article by id, populate it with it's comments
+// app.get('/articles/:id', (req, res)=>{
+//     // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+//     db.Article.findOne({_id: req.params.id})
+//         // ..and populate all of the comments associated with it
+//         .populate("comment")
+//         .then((dbArticle)=>{
+//             // If we find articles, they are sent back to the client with the comments attached
+//             res.json(dbArticle);
+//         })
+//         .catch((err)=>{
+//             // If an error occurs, send the err to the client instead
+//             res.json(err);
+//         });
 
-// Route for saving/updating Article's associated comments
-app.post('/articles/:id', (req, res)=>{
-    db.Comment.create(req.body)
-        .then((dbComment)=>{
-            // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-            // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-            return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
-        })
-        .then((dbArticle)=>{
-            // If we were able to successfully update an Article, send it back to the client
-            res.json(dbArticle);
-        })
-        .catch((err)=>{
-            // If an error occurred, send it to the client
-            res.json(err);
-        });
-});
+// });
+
+// // Route for saving/updating Article's associated comments
+// app.post('/articles/:id', (req, res)=>{
+//     db.Comment.create(req.body)
+//         .then((dbComment)=>{
+//             // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`.
+//             // Update the Article to be associated with the new Note
+//             return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
+//         })
+//         .then((dbArticle)=>{
+//             // If we were able to successfully update an Article, send it back to the client
+//             res.json(dbArticle);
+//         })
+//         .catch((err)=>{
+//             // If an error occurred, send it to the client
+//             res.json(err);
+//         });
+// });
 
 // Starts the server
 app.listen(PORT, ()=>{
