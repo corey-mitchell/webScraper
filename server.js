@@ -69,9 +69,10 @@ app.get('/scrape', (req, res)=>{
                 .children('div')
                 .text();
 
-            console.log(result);
+            // console.log(result);
 
-            // This is where I'm currently at.
+            // This is where I'm currently at. It works but I need to prevent it from creating dublicate docs.
+
             // Create a new Article using the `result` object built from scraping
             db.Article.create(result)
                 .then((dbArticle)=>{
