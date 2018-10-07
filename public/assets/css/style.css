@@ -163,7 +163,7 @@ textarea {
     margin: 5px;
 }
   
-.note.list-group-item .btn {
+.comments.list-group-item .btn {
     position: relative;
     bottom: 10px;
 }
