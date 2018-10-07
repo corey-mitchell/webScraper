@@ -1,4 +1,19 @@
 $(document).ready(()=>{
+    // Handles scrape articles button
+    $('.scrape-new').on('click', function(event){
+        event.preventDefault();
+        // Sends GET request
+        $.ajax(`/scrape`, {
+            type: 'GET'
+        }).then(
+            // Put the reload in a ready function to reload the page AFTER DB is updated
+            ()=>{
+                // Refreshes page to show changes
+                location.reload()
+            }
+        );
+    });
+
     // Handles save article button
     $('.save').on('click', function(event){
         // Targets article id
@@ -28,7 +43,6 @@ $(document).ready(()=>{
             location.reload()
         );
     });
-
 
     // Working on...
 

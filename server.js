@@ -110,11 +110,11 @@ app.get('/scrape', (req, res)=>{
                 })
                 .catch((err)=>{
                     // If an error occurred, send it to the client
-                    return res.json(err);
+                    res.json(err);
                 });
         });
         // If we were able to successfully scrape and save an article, send a message to the client
-        res.send("Scrape Complete");
+        // res.send("Scrape Complete");
     });
 });
 
