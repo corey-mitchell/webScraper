@@ -71,6 +71,35 @@ app.get('/',(req, res)=>{
         });
 });
 
+// Route for saving articles
+app.get('/saved', (req, res)=>{
+    // Targets all articles in the DB the are saved
+    db.Article.find({saved: true})
+        .then((data)=>{
+            // Data comes back as an array of objects,
+            // I made the variables to target the data I need to pass into handlebars
+            const id = data.map((res)=>{return res._id});
+            const title = data.map((res)=>{return res.title});
+            const link = data.map((res)=>{return res.link});
+            const summary = data.map((res)=>{return res.summary});
+
+            // An object of data to pass to handlebars to use
+            const articleObj = {
+                article: data,
+                id: id,
+                title: title,
+                link: link,
+                summary: summary
+            };
+            // Sends the saved.handlebars file and the data to populate it
+            res.render('saved', articleObj);
+        })
+        .catch((err)=>{
+            // If an error occurs, send the err to the client
+            res.json(err);
+        });
+})
+
 // Route for scraping website
 app.get('/scrape', (req, res)=>{
     // Gets HTML body
@@ -118,42 +147,12 @@ app.get('/scrape', (req, res)=>{
     });
 });
 
-// Route for saving articles
-app.get('/saved', (req, res)=>{
-    // Targets all articles in the DB the are saved
-    db.Article.find({saved: true})
-        .then((data)=>{
-            // Data comes back as an array of objects,
-            // I made the variables to target the data I need to pass into handlebars
-            const id = data.map((res)=>{return res._id});
-            const title = data.map((res)=>{return res.title});
-            const link = data.map((res)=>{return res.link});
-            const summary = data.map((res)=>{return res.summary});
-
-            // An object of data to pass to handlebars to use
-            const articleObj = {
-                article: data,
-                id: id,
-                title: title,
-                link: link,
-                summary: summary
-            };
-            // Sends the saved.handlebars file and the data to populate it
-            res.render('saved', articleObj);
-        })
-        .catch((err)=>{
-            // If an error occurs, send the err to the client
-            res.json(err);
-        });
-})
-
-// Route for changing article's 'saved' state
-app.put('/saved/:id', (req, res)=>{
-    // Targets article by ID then changes saved state to true
-    db.Article.findOneAndUpdate({_id: req.params.id}, {saved: true}, {new: true})
-        .then((dbSaved)=>{
-            // Send article back to the client
-            console.log(dbSaved)
+// Route for deleting ALL articles
+app.post('/articles/delete', (req, res)=>{
+    db.Article.deleteMany()
+        .then(()=>{
+            // Alert Client that the articles have been cleared
+            console.log('Articles cleared.')
         })
         .catch((err)=>{
             // If an error occurs, send the err to the client
@@ -161,7 +160,21 @@ app.put('/saved/:id', (req, res)=>{
         });
 });
 
-// Route for deleting articles
+// Route for changing article's 'saved' state
+app.put('/saved/:id', (req, res)=>{
+    // Targets article by ID then changes saved state to true
+    db.Article.findOneAndUpdate({_id: req.params.id}, {saved: true}, {new: true})
+        .then((dbSaved)=>{
+            // Send article back to the client
+            console.log(dbSaved);
+        })
+        .catch((err)=>{
+            // If an error occurs, send the err to the client
+            res.json(err);
+        });
+});
+
+// Route for deleting specific articles
 app.delete('/articles/:id', (req, res)=>{
     db.Article.findOneAndDelete({_id: req.params.id})
         .then((dbArticle)=>{
@@ -173,7 +186,6 @@ app.delete('/articles/:id', (req, res)=>{
             res.json(err);
         });
 });
-
 
 // Route for grabbing a specific article by id, populate it with it's comments
 app.get('/articles/:id', (req, res)=>{

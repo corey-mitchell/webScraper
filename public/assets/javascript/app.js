@@ -1,7 +1,6 @@
 $(document).ready(()=>{
     // Handles scrape articles button
-    $('.scrape-new').on('click', function(event){
-        event.preventDefault();
+    $('.scrape-new').on('click', ()=>{
         // Sends GET request
         $.ajax(`/scrape`, {
             type: 'GET'
@@ -15,7 +14,7 @@ $(document).ready(()=>{
     });
 
     // Handles save article button
-    $('.save').on('click', function(event){
+    $('.save').on('click', function(){
         // Targets article id
         const id = $(this).data('id');
         // console.log(id);
@@ -30,7 +29,7 @@ $(document).ready(()=>{
     });
 
     // Handles delete article button
-    $('.delete').on('click', function(event){
+    $('.delete').on('click', function(){
         // Targets article id
         const id = $(this).data('id');
         // console.log(id);
@@ -38,6 +37,17 @@ $(document).ready(()=>{
         // Sends a DELETE request
         $.ajax(`/articles/${id}`, {
             type: 'DELETE'
+        }).then(
+            // Refreshes page to show changes
+            location.reload()
+        );
+    });
+
+    // Handles clear articles button
+    $('.clear').on('click', ()=>{
+        // Sends a DELETE request
+        $.ajax('/articles/delete', {
+            type: 'POST'
         }).then(
             // Refreshes page to show changes
             location.reload()
