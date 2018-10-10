@@ -63,11 +63,13 @@ $(document).ready(()=>{
         let commentToRender = [];
         let currentComment;
 
-        // If no comments then display no comments message
+        // If no comments then display no comments message...
         if (!data.comments.length) {
-          currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
-          commentToRender.push(currentComment);
-        // Else Log out comments
+            currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
+            commentToRender.push(currentComment);
+            console.log(commentToRender);
+
+        // ...Else Log out comments
         }else {
             // Maps through the comments array
             data.comments.map((res)=>{
@@ -76,11 +78,10 @@ $(document).ready(()=>{
                 $.ajax(`/comments/${res}`, {
                     type: 'GET'
                 }).then((data)=>{
-                    // console.log(data);
+                    console.log(data);
                     // Create a list item for each comment in the array
                     currentComment = $(
-                        `<li class='list-group-item note'>
-                        ${data.body}
+                        `<li class='list-group-item note'>${data.body}
                         <button class='btn btn-danger comment-delete'>x</button>
                         </li>`
                     );
@@ -90,14 +91,19 @@ $(document).ready(()=>{
 
                     // Pushes the above list item into an array to send to the page all at once
                     commentToRender.push(currentComment);
+                    console.log(commentToRender);
 
-                    // Renders comment body to page
+                    // For some weird reason, this function started to give me trouble last second. It would either push the comments,
+                    // or it would push the 'no comments' message. But it would not push both. So, as a quick fix, I put the copied line 105 onto line 100.
+                    // It doesn't look pretty, but it functions. If I have more time, I'll give it a look over.
+
                     $(".comment-container").append(commentToRender);
                 });
             });
         };
+        // Renders comment body to page
+        $(".comment-container").append(commentToRender);
     };
-
 
     // Handles comments button, opens comments modal
     $(".comments").on("click", function(){
