@@ -2,7 +2,7 @@ $(document).ready(()=>{
     // Handles scrape articles button
     $('.scrape-new').on('click', ()=>{
         // Sends GET request
-        $.ajax(`/scrape`, {
+        $.ajax(`/api/scrape`, {
             type: 'GET'
         }).then(
             // Put the reload in a ready function to reload the page AFTER DB is updated
@@ -13,6 +13,17 @@ $(document).ready(()=>{
         );
     });
 
+    // Handles clear articles button
+    $('.clear').on('click', ()=>{
+        // Sends a DELETE request
+        $.ajax('/api/articles/delete', {
+            type: 'POST'
+        }).then(
+            // Refreshes page to show changes
+            location.reload()
+        );
+    });    
+
     // Handles save article button
     $('.save').on('click', function(){
         // Targets article id
@@ -20,7 +31,7 @@ $(document).ready(()=>{
         // console.log(id);
 
         // Sends a PUT request
-        $.ajax(`/saved/${id}`, {
+        $.ajax(`/api/saved/${id}`, {
             type: 'PUT'
         }).then (
             // Refreshes page to show changes
@@ -37,19 +48,8 @@ $(document).ready(()=>{
         // console.log(id);
     
         // Sends a DELETE request
-        $.ajax(`/articles/${id}`, {
+        $.ajax(`/api/articles/${id}`, {
             type: 'DELETE'
-        }).then(
-            // Refreshes page to show changes
-            location.reload()
-        );
-    });
-
-    // Handles clear articles button
-    $('.clear').on('click', ()=>{
-        // Sends a DELETE request
-        $.ajax('/articles/delete', {
-            type: 'POST'
         }).then(
             // Refreshes page to show changes
             location.reload()
@@ -75,7 +75,7 @@ $(document).ready(()=>{
             data.comments.map((res)=>{
                 // For each comment, send GET request
                 // This passes the comment id, which is 'joined' with the articles, into my api to get comment body
-                $.ajax(`/comments/${res}`, {
+                $.ajax(`/api/comments/${res}`, {
                     type: 'GET'
                 }).then((data)=>{
                     console.log(data);
@@ -113,7 +113,7 @@ $(document).ready(()=>{
           .data("id");
 
         // Grab any comments with this headline/article id
-        $.ajax(`/articles/${currentArticle}`, {
+        $.ajax(`/api/articles/${currentArticle}`, {
             type: 'GET'
         }).then((data)=>{
             // Constructs modal
@@ -149,7 +149,7 @@ $(document).ready(()=>{
         const comment = $("#text").val().trim();
 
         // Sends a POST request
-        $.ajax(`/articles/${currentArticle}`, {
+        $.ajax(`/api/articles/${currentArticle}`, {
             type: "POST",
             data: {body: comment}
         }).then((data)=>{
