@@ -37,7 +37,9 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 
+
 // Routes
+
 
 // Default/Home route
 app.get('/',(req, res)=>{
@@ -202,6 +204,16 @@ app.get('/articles/:id', (req, res)=>{
             res.json(err);
         });
 
+});
+
+app.get('/comments/:id', (req, res)=>{
+    db.Comment.findOne({_id: req.params.id})
+        .then((dbComment)=>{
+            res.json(dbComment);
+        })
+        .catch((err)=>{
+            res.json(err);
+        });
 });
 
 // Route for saving/updating Article's associated comments

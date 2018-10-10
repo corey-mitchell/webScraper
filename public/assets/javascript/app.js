@@ -56,6 +56,49 @@ $(document).ready(()=>{
         );
     });
 
+    // Renders comments to modal
+    const renderCommentsList = (data)=>{
+        console.log(data);
+        // Creates variables to house comments
+        let commentToRender = [];
+        let currentComment;
+
+        // If no comments then display no comments message
+        if (!data.comments.length) {
+          currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
+          commentToRender.push(currentComment);
+        // Else Log out comments
+        }else {
+            // Maps through the comments array
+            data.comments.map((res)=>{
+                // For each comment, send GET request
+                // This passes the comment id, which is 'joined' with the articles, into my api to get comment body
+                $.ajax(`/comments/${res}`, {
+                    type: 'GET'
+                }).then((data)=>{
+                    // console.log(data);
+                    // Create a list item for each comment in the array
+                    currentComment = $(
+                        `<li class='list-group-item note'>
+                        ${data.body}
+                        <button class='btn btn-danger comment-delete'>x</button>
+                        </li>`
+                    );
+
+                    // Give each delete button a data-id to target later
+                    currentComment.children("button").data("_id", data._id);
+
+                    // Pushes the above list item into an array to send to the page all at once
+                    commentToRender.push(currentComment);
+
+                    // Renders comment body to page
+                    $(".comment-container").append(commentToRender);
+                });
+            });
+        };
+    };
+
+
     // Handles comments button, opens comments modal
     $(".comments").on("click", function(){
         // Targets article id
@@ -63,38 +106,31 @@ $(document).ready(()=>{
           .parents(".card")
           .data("id");
 
-        // Grab any notes with this headline/article id
+        // Grab any comments with this headline/article id
         $.ajax(`/articles/${currentArticle}`, {
             type: 'GET'
         }).then((data)=>{
-        // Constructs modal
-        const modalText = $("<div class='container-fluid text-center'>").append(
-            $("<h4>").text(`Notes For Article: ${currentArticle}`),
-            $("<hr>"),
-            $("<ul class='list-group comment-container'>"),
-            $("<textarea id='text' placeholder='New Note' rows='4' cols='60'>"),
-            $(`<button class='btn btn-success saveComment' data-id=${currentArticle}>Save Comment</button>`)
-        );
+            // Constructs modal
+            const modalText = $("<div class='container-fluid text-center'>").append(
+                $("<h4>").text(`Article Comments:`),
+                $("<hr>"),
+                $("<ul class='list-group comment-container'>"),
+                $("<textarea id='text' placeholder='New Note' rows='4' cols='60'>"),
+                $(`<button class='btn btn-success saveComment' data-id=${currentArticle}>Save Comment</button>`)
+            );
 
-        // Opens modal with above html
-        bootbox.dialog({
-            message: modalText,
-            closeButton: true
-        });
-        const commentData = {
-            _id: currentArticle,
-            comments: data.comments || []
-        };
+            // Opens modal with above html
+            bootbox.dialog({
+                message: modalText,
+                closeButton: true
+            });
 
-        // console.log(commentData);
+            // Targets data to send to render function
+            const commentData = data || [];
 
-        // Adding some information about the article and article notes to the save button for easy access
-        // When trying to add a new note
-        $(".btn.save").data("article", commentData);
-        // renderNotesList will populate the actual note HTML inside of the modal we just created/opened
-        renderNotesList(commentData);
-        });
-        
+            // Sends data to render function
+            renderCommentsList(commentData);
+        });        
     });
 
     // Handles save comment button
@@ -109,41 +145,16 @@ $(document).ready(()=>{
         // Sends a POST request
         $.ajax(`/articles/${currentArticle}`, {
             type: "POST",
-            data: {_headlineId: currentArticle, body: comment}
+            data: {body: comment}
         }).then((data)=>{
-            console.log(data);
-            // Empty the textarea after comment is submitted
-            $('#text').empty();   
+            // Closes modal after comment save
+            bootbox.hideAll();
         });
     });
 
-
-
-    function renderNotesList(data) {
-        // This function handles rendering note list items to our notes modal
-        // Setting up an array of notes to render after finished
-        // Also setting up a currentNote constiable to temporarily store each note
-        let notesToRender = [];
-        let currentNote;
-        if (!data.comments.length) {
-            // If we have no notes, just display a message explaining this
-            currentNote = $("<li class='list-group-item'>No notes for this article yet.</li>");
-            notesToRender.push(currentNote);
-        } else {
-            // If we do have notes, go through each one
-            for (let i = 0; i < data.comments.length; i++) {
-                // Constructs an li element to contain our noteText and a delete button
-                currentNote = $("<li class='list-group-item note'>")
-                .text(data.comments[i].noteText)
-                .append($("<button class='btn btn-danger note-delete'>x</button>"));
-                // Store the note id on the delete button for easy access when trying to delete
-                currentNote.children("button").data("_id", data.comments[i]._id);
-                // Adding our currentNote to the notesToRender array
-                notesToRender.push(currentNote);
-            }
-        }
-        // Now append the notesToRender to the note-container inside the note modal
-        $(".comment-container").append(notesToRender);
-    }
+    // Handles comment delete button
+    $(document).on('click', '.comment-delete', function(){
+        console.log('button clicked');
+    });
 
 });
