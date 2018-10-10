@@ -206,12 +206,11 @@ app.get('/articles/:id', (req, res)=>{
 
 // Route for saving/updating Article's associated comments
 app.post('/articles/:id', (req, res)=>{
-    // console.log(req.body);
     db.Comment.create(req.body)
         .then((dbComment)=>{
             // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`.
             // Update the Article to be associated with the new Note
-            return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
+            return db.Article.findOneAndUpdate({ _id: req.params.id }, { comments: dbComment._id }, { new: true });
         })
         .then((dbArticle)=>{
             // If we were able to successfully update an Article, send it back to the client

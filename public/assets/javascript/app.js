@@ -83,10 +83,10 @@ $(document).ready(()=>{
         });
         const commentData = {
             _id: currentArticle,
-            notes: data || []
+            comments: data.comments || []
         };
 
-        console.log(commentData);
+        // console.log(commentData);
 
         // Adding some information about the article and article notes to the save button for easy access
         // When trying to add a new note
@@ -104,18 +104,18 @@ $(document).ready(()=>{
             .data('id');
 
         // Targets textarea text
-        const body = $("#text").val().trim();
+        const comment = $("#text").val().trim();
 
-        // console.log(currentArticle, text);
-
+        // Sends a POST request
         $.ajax(`/articles/${currentArticle}`, {
             type: "POST",
-            data: {body}
+            data: {_headlineId: currentArticle, body: comment}
         }).then((data)=>{
-            // console.log(data);    
+            console.log(data);
+            // Empty the textarea after comment is submitted
+            $('#text').empty();   
         });
     });
-
 
 
 
@@ -125,27 +125,25 @@ $(document).ready(()=>{
         // Also setting up a currentNote constiable to temporarily store each note
         let notesToRender = [];
         let currentNote;
-        if (!data.notes.length) {
-          // If we have no notes, just display a message explaining this
-          currentNote = $("<li class='list-group-item'>No notes for this article yet.</li>");
-          notesToRender.push(currentNote);
-        } else {
-          // If we do have notes, go through each one
-          for (const i = 0; i < data.notes.length; i++) {
-            // Constructs an li element to contain our noteText and a delete button
-            currentNote = $("<li class='list-group-item note'>")
-              .text(data.notes[i].noteText)
-              .append($("<button class='btn btn-danger note-delete'>x</button>"));
-            // Store the note id on the delete button for easy access when trying to delete
-            currentNote.children("button").data("_id", data.notes[i]._id);
-            // Adding our currentNote to the notesToRender array
+        if (!data.comments.length) {
+            // If we have no notes, just display a message explaining this
+            currentNote = $("<li class='list-group-item'>No notes for this article yet.</li>");
             notesToRender.push(currentNote);
-          }
+        } else {
+            // If we do have notes, go through each one
+            for (let i = 0; i < data.comments.length; i++) {
+                // Constructs an li element to contain our noteText and a delete button
+                currentNote = $("<li class='list-group-item note'>")
+                .text(data.comments[i].noteText)
+                .append($("<button class='btn btn-danger note-delete'>x</button>"));
+                // Store the note id on the delete button for easy access when trying to delete
+                currentNote.children("button").data("_id", data.comments[i]._id);
+                // Adding our currentNote to the notesToRender array
+                notesToRender.push(currentNote);
+            }
         }
         // Now append the notesToRender to the note-container inside the note modal
         $(".comment-container").append(notesToRender);
-      }
-
-
+    }
 
 });
