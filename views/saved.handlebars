@@ -52,11 +52,11 @@
 
     {{!-- Creates a 'Card' for each article --}}
     {{#each article}}
-        <div class="card">
+        <div class="card" data-id="{{id}}">
             <div class="card-header">
-            <h3 data-id="{{id}}">
+            <h3>
                 <a class="article-link" target="_blank" rel="noopener noreferrer" href="{{link}}">{{title}}</a>
-                <a class="btn btn-danger delete" data-id="{{id}}">Delete From Saved</a>
+                <a class="btn btn-danger delete">Delete From Saved</a>
                 <a class="btn btn-info comments">Comments</a>
             </h3>
             </div>
@@ -66,12 +66,12 @@
 </div>
 
 {{!-- Modal --}}
-{{!-- <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-dialog" role="document">
-            <div class="modal-content">
+<div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModal" aria-hidden="true">
+    <div class='container-fluid text-center'></div>
+    {{!-- <div class="modal-dialog" role="document">
+        <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">${currentArticle}</h5>
+                <h5 class="modal-title" id="commentModalLabel">{{id}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
                 </button>
@@ -81,12 +81,11 @@
                 <textarea placeholder='New Note' rows='4' cols='60'></textarea>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success">Save Comment</button>
-            </div>
+                <button type="button" class="btn btn-success saveComment">Save Comment</button>
             </div>
         </div>
-    </div>
-</div> --}}
+    </div> --}}
+</div>
 
 {{!-- Footer --}}
 <footer class="footer">

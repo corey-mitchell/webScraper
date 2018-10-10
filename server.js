@@ -135,7 +135,7 @@ app.get('/scrape', (req, res)=>{
             db.Article.create(result)
                 .then((dbArticle)=>{
                     // View the added result in the console
-                    console.log(dbArticle);
+                    res.json(dbArticle);
                 })
                 .catch((err)=>{
                     // If an error occurred, send it to the client
@@ -166,7 +166,7 @@ app.put('/saved/:id', (req, res)=>{
     db.Article.findOneAndUpdate({_id: req.params.id}, {saved: true}, {new: true})
         .then((dbSaved)=>{
             // Send article back to the client
-            console.log(dbSaved);
+            res.json(dbSaved);
         })
         .catch((err)=>{
             // If an error occurs, send the err to the client
@@ -179,7 +179,7 @@ app.delete('/articles/:id', (req, res)=>{
     db.Article.findOneAndDelete({_id: req.params.id})
         .then((dbArticle)=>{
             // Send article back to the client
-            console.log(dbArticle);
+            res.json(dbArticle);
         })
         .catch((err)=>{
             // If an error occurs, send the err to the client
@@ -195,7 +195,7 @@ app.get('/articles/:id', (req, res)=>{
         .populate("comment")
         .then((dbArticle)=>{
             // If we find articles, they are sent back to the client with the comments attached
-            console.log(dbArticle);
+            res.json(dbArticle);
         })
         .catch((err)=>{
             // If an error occurs, send the err to the client instead
@@ -204,25 +204,23 @@ app.get('/articles/:id', (req, res)=>{
 
 });
 
-// All this is commented out while I work on other things.
-
-// // Route for saving/updating Article's associated comments
-// app.post('/articles/:id', (req, res)=>{
-//     db.Comment.create(req.body)
-//         .then((dbComment)=>{
-//             // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`.
-//             // Update the Article to be associated with the new Note
-//             return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
-//         })
-//         .then((dbArticle)=>{
-//             // If we were able to successfully update an Article, send it back to the client
-//             res.json(dbArticle);
-//         })
-//         .catch((err)=>{
-//             // If an error occurred, send it to the client
-//             res.json(err);
-//         });
-// });
+// Route for saving/updating Article's associated comments
+app.post('/articles/:id', (req, res)=>{
+    db.Comment.create(req.body)
+        .then((dbComment)=>{
+            // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`.
+            // Update the Article to be associated with the new Note
+            return db.Article.findOneAndUpdate({id: req.params.id}, {comment: dbComment._id}, {new: true});
+        })
+        .then((dbArticle)=>{
+            // If we were able to successfully update an Article, send it back to the client
+            res.json(dbArticle);
+        })
+        .catch((err)=>{
+            // If an error occurred, send it to the client
+            res.json(err);
+        });
+});
 
 // Starts the server
 app.listen(PORT, ()=>{
