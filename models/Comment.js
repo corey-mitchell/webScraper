@@ -6,8 +6,10 @@ const Schema = mongoose.Schema;
 
 // Create a new Comment Schema
 const CommentSchema = new Schema({
-    title: String,
-    body: String
+    body: {
+        type: String,
+        required: true
+    }
 });
 
 // Creates model from the above Schema

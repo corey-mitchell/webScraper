@@ -72,8 +72,8 @@ $(document).ready(()=>{
             $("<h4>").text(`Notes For Article: ${currentArticle}`),
             $("<hr>"),
             $("<ul class='list-group comment-container'>"),
-            $("<textarea placeholder='New Note' rows='4' cols='60'>"),
-            $("<button class='btn btn-success saveComment'>Save Comment</button>")
+            $("<textarea id='text' placeholder='New Note' rows='4' cols='60'>"),
+            $(`<button class='btn btn-success saveComment' data-id=${currentArticle}>Save Comment</button>`)
         );
 
         // Opens modal with above html
@@ -90,17 +90,31 @@ $(document).ready(()=>{
 
         // Adding some information about the article and article notes to the save button for easy access
         // When trying to add a new note
-        // $(".btn.save").data("article", noteData);
+        $(".btn.save").data("article", commentData);
         // renderNotesList will populate the actual note HTML inside of the modal we just created/opened
-        // renderNotesList(noteData);
+        renderNotesList(commentData);
         });
         
     });
 
     // Handles save comment button
-    $(document).on('click', '.saveComment', ()=>{
-        console.log('button clicked');
-    })
+    $(document).on('click', '.saveComment', function() {
+        // Targets article id
+        const currentArticle = $(this)
+            .data('id');
+
+        // Targets textarea text
+        const body = $("#text").val().trim();
+
+        // console.log(currentArticle, text);
+
+        $.ajax(`/articles/${currentArticle}`, {
+            type: "POST",
+            data: {body}
+        }).then((data)=>{
+            // console.log(data);    
+        });
+    });
 
 
 
@@ -110,7 +124,7 @@ $(document).ready(()=>{
         // Setting up an array of notes to render after finished
         // Also setting up a currentNote constiable to temporarily store each note
         let notesToRender = [];
-       let currentNote;
+        let currentNote;
         if (!data.notes.length) {
           // If we have no notes, just display a message explaining this
           currentNote = $("<li class='list-group-item'>No notes for this article yet.</li>");
