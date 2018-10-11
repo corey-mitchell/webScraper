@@ -161,6 +161,8 @@ $(document).ready(()=>{
     // Need to finish this and I'll be done with app.js
     // Handles comment delete button
     $(document).on('click', '.comment-delete', function(){
+
+        // I am here. Need to pass comment ID into data
         // Targets article ID
         const id = $(this).data('id');
         console.log(currentComment);
