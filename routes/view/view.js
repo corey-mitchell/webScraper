@@ -5,12 +5,12 @@ const router = require("express").Router();
 const controller = require("../../controllers/controller");
 
 // Setting Routes
-router.get("/saved", (req, res)=>{
-  res.render("saved", controller.findAll);
+router.get("/", (req, res)=>{
+  res.render("index");
 });
 
-router.use("/", (req, res)=>{
-  res.render("index");
+router.get("/saved", (req, res)=>{
+  res.render("saved");
 });
 
 // Exporting Routes

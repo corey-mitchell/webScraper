@@ -41,8 +41,10 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 
-
 // Routes
+
+// For now, I serve my html in the server so that I can easily pass the data into it.
+// I am working on making a controller for my views.js files.
 
 
 // Default/Home route
@@ -105,7 +107,6 @@ app.get('/saved', (req, res)=>{
             res.json(err);
         });
 });
-
 
 // Starts the server
 app.listen(PORT, ()=>{

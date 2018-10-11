@@ -7,31 +7,6 @@ const db = require('../models');
 
 // Exports methods
 module.exports = {
-    findAll: (req, res)=>{
-    // Targets all articles in the DB the are saved
-    db.Article.find({saved: true})
-        .then((data)=>{
-            // Data comes back as an array of objects,
-            // I made the variables to target the data I need to pass into handlebars
-            const id = data.map((res)=>{return res._id});
-            const title = data.map((res)=>{return res.title});
-            const link = data.map((res)=>{return res.link});
-            const summary = data.map((res)=>{return res.summary});
-
-            // An object of data to pass to handlebars to use
-            const articleObj = {
-                article: data,
-                id: id,
-                title: title,
-                link: link,
-                summary: summary
-            };
-        })
-        .catch((err)=>{
-            // If an error occurs, send the err to the client
-            res.json(err);
-        });
-    },
     // Scrapes website for articles
     scrape: (req, res)=>{
             axios.get('https://www.kxan.com/news/local/austin').then((response)=>{

@@ -158,6 +158,8 @@ $(document).ready(()=>{
         });
     });
 
+
+    // Need to finish this and I'll be done with app.js
     // Handles comment delete button
     $(document).on('click', '.comment-delete', function(){
         console.log('button clicked');
