@@ -141,9 +141,8 @@ $(document).ready(()=>{
 
     // Handles save comment button
     $(document).on('click', '.saveComment', function() {
-        // Targets article id
-        const currentArticle = $(this)
-            .data('id');
+        // Targets article ID
+        const currentArticle = $(this).data('id');
 
         // Targets textarea text
         const comment = $("#text").val().trim();
@@ -162,7 +161,17 @@ $(document).ready(()=>{
     // Need to finish this and I'll be done with app.js
     // Handles comment delete button
     $(document).on('click', '.comment-delete', function(){
-        console.log('button clicked');
+        // Targets article ID
+        const id = $(this).data('id');
+        console.log(currentComment);
+
+        // Sends a DELETE request
+        $.ajax(`/api/comments/${id}`, {
+            type: 'DELETE'
+        }).then(
+            // Refreshes page to show changes
+            location.reload()
+        );
     });
 
 });
