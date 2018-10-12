@@ -46,7 +46,6 @@ mongoose.connect(MONGODB_URI);
 // For now, I serve my html in the server so that I can easily pass the data into it.
 // I am working on making a controller for my views.js files.
 
-
 // Default/Home route
 app.get('/',(req, res)=>{
     // Targets all articles in the DB that are NOT saved

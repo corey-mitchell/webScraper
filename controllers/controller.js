@@ -9,6 +9,7 @@ const db = require('../models');
 module.exports = {
     // Scrapes website for articles
     scrape: (req, res)=>{
+            // Sends GET request for website to scrape
             axios.get('https://www.kxan.com/news/local/austin').then((response)=>{
             // Loads cheerio into a shorthand selector
             const $ = cheerio.load(response.data);
@@ -48,6 +49,7 @@ module.exports = {
     },
     // Deletes ALL articles in the DB
     deleteAll: (req, res)=>{
+        // Targets all articles to delete
         db.Article.deleteMany()
             .then(()=>{
                 // Alert Client that the articles have been cleared
@@ -60,6 +62,7 @@ module.exports = {
     },
     // Deletes ONE article
     deleteArticle: (req, res)=>{
+        // Targets article by ID to delete
         db.Article.findOneAndDelete({_id: req.params.id})
             .then((dbArticle)=>{
                 // Send article back to the client
@@ -85,7 +88,7 @@ module.exports = {
     },
     // Targets specific article to comment on
     openComments: (req, res)=>{
-        // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+        // Targets all comments
         db.Article.findOne({_id: req.params.id})
             // ..and populate all of the comments associated with it
             .populate("comment")
@@ -100,6 +103,7 @@ module.exports = {
     },
     // Saves/Updates article's associated comments
     saveComment: (req, res)=>{
+        // Creates comment in DB
         db.Comment.create(req.body)
             .then((dbComment)=>{
                 // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`.
@@ -117,20 +121,31 @@ module.exports = {
     },
     // Trades comment id for comment body
     getComment: (req, res)=>{
+        // Targets comment by ID
         db.Comment.findOne({_id: req.params.id})
             .then((dbComment)=>{
                 res.json(dbComment);
             })
             .catch((err)=>{
+                // If an error occurs, send the err to the client
                 res.json(err);
             });
     },
     // Deletes comment
     deleteComment: (req, res)=>{
+        // Targets comment to delete
         db.Comment.findOneAndDelete({_id: req.params.id})
             .then((dbComment)=>{
-                // Send comment back to client
+                console.log(req);
+                // If comment, send comment back to client
                 res.json(dbComment);
+
+                // db.Article.findOneAndUpdate
+
+                // Comment.pre('remove', function(next) {
+                //     // Remove all the assignment docs that reference the removed person.
+                //     this.model('Article').remove({ comment: req.params.id }, next);
+                // });
             })
             .catch((err)=>{
                 // If an error occurs, send the err to the client

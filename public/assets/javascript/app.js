@@ -58,7 +58,7 @@ $(document).ready(()=>{
 
     // Renders comments to modal
     const renderCommentsList = (data)=>{
-        console.log(data);
+        // console.log(data);
         // Creates variables to house comments
         let commentToRender = [];
         let currentComment;
@@ -67,7 +67,6 @@ $(document).ready(()=>{
         if (!data.comments.length) {
             currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
             commentToRender.push(currentComment);
-            console.log(commentToRender);
 
         // ...Else Log out comments
         }else {
@@ -77,12 +76,11 @@ $(document).ready(()=>{
                 // This passes the comment id, which is 'joined' with the articles, into my api to get comment body
                 $.ajax(`/api/comments/${res}`, {
                     type: 'GET'
-                }).then((data)=>{
-                    console.log(data);
+                }).then((dbComment)=>{
                     // Create a list item for each comment in the array
                     currentComment = $(
-                        `<li class='list-group-item note'>${data.body}
-                        <button class='btn btn-danger comment-delete'>x</button>
+                        `<li class='list-group-item note'>${dbComment.body}
+                        <button class='btn btn-danger comment-delete' data-id='${res}'>x</button>
                         </li>`
                     );
 
@@ -91,7 +89,6 @@ $(document).ready(()=>{
 
                     // Pushes the above list item into an array to send to the page all at once
                     commentToRender.push(currentComment);
-                    console.log(commentToRender);
 
                     // For some weird reason, this function started to give me trouble last second. It would either push the comments,
                     // or it would push the 'no comments' message. But it would not push both. So, as a quick fix, I put the copied line 105 onto line 100.
@@ -108,9 +105,7 @@ $(document).ready(()=>{
     // Handles comments button, opens comments modal
     $(".comments").on("click", function(){
         // Targets article id
-        const currentArticle = $(this)
-          .parents(".card")
-          .data("id");
+        const currentArticle = $(this).parents(".card").data("id");
 
         // Grab any comments with this headline/article id
         $.ajax(`/api/articles/${currentArticle}`, {
@@ -157,23 +152,19 @@ $(document).ready(()=>{
         });
     });
 
-
-    // Need to finish this and I'll be done with app.js
     // Handles comment delete button
     $(document).on('click', '.comment-delete', function(){
 
         // I am here. Need to pass comment ID into data
-        // Targets article ID
+        // Targets comment ID
         const id = $(this).data('id');
-        console.log(currentComment);
 
         // Sends a DELETE request
         $.ajax(`/api/comments/${id}`, {
             type: 'DELETE'
         }).then(
             // Refreshes page to show changes
-            location.reload()
+            // location.reload()
         );
     });
-
 });
