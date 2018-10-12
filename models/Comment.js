@@ -6,6 +6,14 @@ const Schema = mongoose.Schema;
 
 // Create a new Comment Schema
 const CommentSchema = new Schema({
+    articleId: {
+        type: Schema.Types.ObjectId,
+        ref: 'Article'
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
     body: {
         type: String,
         required: true

@@ -89,9 +89,9 @@ module.exports = {
     // Targets specific article to comment on
     openComments: (req, res)=>{
         // Targets all comments
-        db.Article.findOne({_id: req.params.id})
+        db.Comment.find({articleId: req.params.id})
             // ..and populate all of the comments associated with it
-            .populate("comment", { limit: 5})
+            .populate("article")
             .then((dbArticle)=>{
                 // If we find articles, they are sent back to the client with the comments attached
                 res.json(dbArticle);
@@ -146,11 +146,14 @@ module.exports = {
     },
     // Deletes comment reference from article 'comments'
     deleteReference: (req, res)=>{
+        // Targets article by id then deletes comment id in article 'comments' array
         db.Article.findOneAndUpdate({_id: req.params.articleId}, {$pull: {comments:req.params.commentId}})
             .then((dbComment)=>{
+                // If deleted successfully, send new article data back to client
                 res.json(dbComment)
             })
             .catch((err)=>{
+                // If an error occurs, send the err to the client
                 res.json(err);
             });
     }

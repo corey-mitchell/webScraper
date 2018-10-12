@@ -1,4 +1,51 @@
 $(document).ready(()=>{
+    // Functions
+    // I plan on there being more functions when I get around to serving the html routes outside of the server.js file
+
+    // Renders comments to modal
+    const renderCommentsList = (data)=>{
+        // Creates variables to house comments
+        let commentToRender = [];
+        let currentComment;
+
+        // If no comments then display no comments message...
+        if (!data.length) {
+            currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
+            commentToRender.push(currentComment);
+
+        // ...Else Log out comments
+        }else {
+            // Maps through the comments array
+            data.map((res)=>{
+                // For each comment, send GET request
+                // This passes the comment id, which is 'joined' with the articles, into my api to get comment body
+                $.ajax(`/api/comments/${res._id}`, {
+                    type: 'GET'
+                }).then((dbComment)=>{
+                    // Create a list item for each comment in the array
+                    currentComment = $(
+                        `<li class='list-group-item note'>${dbComment.body}
+                        <button class='btn btn-danger comment-delete' data-id='${res._id}' data-articleId='${res.articleIdid}'>x</button>
+                        </li>`
+                    );
+
+                    // Pushes the above list item into an array to send to the page all at once
+                    commentToRender.push(currentComment);
+
+                    // For some weird reason, this function started to give me trouble last second. It would either push the comments,
+                    // or it would push the 'no comments' message. But it would not push both. So, as a quick fix, I put the copied line 105 onto line 100.
+                    // It doesn't look pretty, but it functions. If I have more time, I'll give it a look over.
+
+                    $(".comment-container").append(commentToRender);
+                });
+            });
+        };
+        // Renders comment body to page
+        $(".comment-container").append(commentToRender);
+    };
+
+    // Buttons
+
     // Handles scrape articles button
     $('.scrape-new').on('click', ()=>{
         // Sends GET request
@@ -17,7 +64,7 @@ $(document).ready(()=>{
     $('.clear').on('click', ()=>{
         // Sends a DELETE request
         $.ajax('/api/articles/delete', {
-            type: 'POST'
+            type: 'DELETE'
         }).then(
             // Refreshes page to show changes
             location.reload()
@@ -55,52 +102,6 @@ $(document).ready(()=>{
             location.reload()
         );
     });
-
-    // Renders comments to modal
-    const renderCommentsList = (data)=>{
-        // console.log(data);
-        // Creates variables to house comments
-        let commentToRender = [];
-        let currentComment;
-
-        // If no comments then display no comments message...
-        if (!data.comments.length) {
-            currentComment = "<li class='list-group-item'>No comments for this article yet.</li>";
-            commentToRender.push(currentComment);
-
-        // ...Else Log out comments
-        }else {
-            // Maps through the comments array
-            data.comments.map((res)=>{
-                // For each comment, send GET request
-                // This passes the comment id, which is 'joined' with the articles, into my api to get comment body
-                $.ajax(`/api/comments/${res}`, {
-                    type: 'GET'
-                }).then((dbComment)=>{
-                    // Create a list item for each comment in the array
-                    currentComment = $(
-                        `<li class='list-group-item note'>${dbComment.body}
-                        <button class='btn btn-danger comment-delete' data-id='${res}' data-articleId='${data._id}'>x</button>
-                        </li>`
-                    );
-
-                    // Give each delete button a data-id to target later
-                    currentComment.children("button").data("_id", data._id);
-
-                    // Pushes the above list item into an array to send to the page all at once
-                    commentToRender.push(currentComment);
-
-                    // For some weird reason, this function started to give me trouble last second. It would either push the comments,
-                    // or it would push the 'no comments' message. But it would not push both. So, as a quick fix, I put the copied line 105 onto line 100.
-                    // It doesn't look pretty, but it functions. If I have more time, I'll give it a look over.
-
-                    $(".comment-container").append(commentToRender);
-                });
-            });
-        };
-        // Renders comment body to page
-        $(".comment-container").append(commentToRender);
-    };
 
     // Handles comments button, opens comments modal
     $(".comments").on("click", function(){
@@ -142,14 +143,20 @@ $(document).ready(()=>{
         // Targets textarea text
         const comment = $("#text").val().trim();
 
-        // Sends a POST request
-        $.ajax(`/api/articles/${currentArticle}`, {
-            type: "POST",
-            data: {body: comment}
-        }).then((data)=>{
-            // Closes modal after comment save
-            bootbox.hideAll();
-        });
+        // If there is a comment typed out, comment it
+        if(comment) {
+            // Sends a POST request
+            $.ajax(`/api/comments/${currentArticle}`, {
+                type: "POST",
+                data: {
+                    articleId: currentArticle,
+                    body: comment
+                }
+            }).then(()=>{
+                // Closes modal after comment save
+                bootbox.hideAll();
+            });
+        };
     });
 
     // Handles comment delete button
@@ -164,14 +171,17 @@ $(document).ready(()=>{
         // Sends a DELETE request
         $.ajax(`/api/comments/${commentId}`, {
             type: 'DELETE'
-        }).then(
+        }).then(()=>{
+            // Lines 170-174 are for deleting the comment reference from the article
+            // Sends a PUT request
             $.ajax(`/api//commentRefence/${articleId}/${commentId}`, {
                 type: 'PUT'
             }).then((res)=>{
+                // Logs new article
                 console.log(res);
-            }),
-            // Refreshes page to show changes
-            // location.reload()
-        );
+            })
+            // Hides modal so that it can refresh the changes
+            bootbox.hideAll();
+        });
     });
 });
