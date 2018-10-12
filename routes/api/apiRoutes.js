@@ -30,8 +30,5 @@ router.get('/comments/:id', controller.getComment);
 // Route for deleting comment
 router.delete('/comments/:id', controller.deleteComment);
 
-// Route for deleting comment reference from article
-router.put('/commentRefence/:articleId/:commentId', controller.deleteReference);
-
 // Exporting Routes
 module.exports = router;

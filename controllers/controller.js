@@ -143,18 +143,5 @@ module.exports = {
                 // If an error occurs, send the err to the client
                 res.json(err);
             });
-    },
-    // Deletes comment reference from article 'comments'
-    deleteReference: (req, res)=>{
-        // Targets article by id then deletes comment id in article 'comments' array
-        db.Article.findOneAndUpdate({_id: req.params.articleId}, {$pull: {comments:req.params.commentId}})
-            .then((dbComment)=>{
-                // If deleted successfully, send new article data back to client
-                res.json(dbComment)
-            })
-            .catch((err)=>{
-                // If an error occurs, send the err to the client
-                res.json(err);
-            });
     }
 };

@@ -165,21 +165,12 @@ $(document).ready(()=>{
         // I am here. Need to pass comment ID into data
         // Targets comment ID
         const commentId = $(this).data('id');
-        const articleId = $(this).data('articleid');
         // console.log($(this).data('articleid'));
 
         // Sends a DELETE request
         $.ajax(`/api/comments/${commentId}`, {
             type: 'DELETE'
         }).then(()=>{
-            // Lines 170-174 are for deleting the comment reference from the article
-            // Sends a PUT request
-            $.ajax(`/api//commentRefence/${articleId}/${commentId}`, {
-                type: 'PUT'
-            }).then((res)=>{
-                // Logs new article
-                console.log(res);
-            })
             // Hides modal so that it can refresh the changes
             bootbox.hideAll();
         });
