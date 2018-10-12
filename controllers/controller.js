@@ -88,9 +88,9 @@ module.exports = {
     },
     // Targets specific article to comment on
     openComments: (req, res)=>{
-        // Targets all comments
+        // Gathers all comments
         db.Comment.find({articleId: req.params.id})
-            // ..and populate all of the comments associated with it
+            // ..and populate all of the comments associated with the article
             .populate("article")
             .then((dbArticle)=>{
                 // If we find articles, they are sent back to the client with the comments attached
