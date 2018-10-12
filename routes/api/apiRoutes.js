@@ -18,6 +18,8 @@ router.delete("/articles/:id", controller.deleteArticle);
 // Route for saving article
 router.put('/saved/:id', controller.save);
 
+router.put('/commentRefence/:articleId/:commentId', controller.deleteReference);
+
 // Route for opening comments modal
 router.get('/articles/:id', controller.openComments);
 

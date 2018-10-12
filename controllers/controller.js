@@ -91,7 +91,7 @@ module.exports = {
         // Targets all comments
         db.Article.findOne({_id: req.params.id})
             // ..and populate all of the comments associated with it
-            .populate("comment")
+            .populate("comment", { limit: 5})
             .then((dbArticle)=>{
                 // If we find articles, they are sent back to the client with the comments attached
                 res.json(dbArticle);
@@ -134,22 +134,24 @@ module.exports = {
     // Deletes comment
     deleteComment: (req, res)=>{
         // Targets comment to delete
-        db.Comment.findOneAndDelete({_id: req.params.id})
+        db.Comment.remove({_id: req.params.id})
             .then((dbComment)=>{
-                console.log(req);
                 // If comment, send comment back to client
                 res.json(dbComment);
-
-                // db.Article.findOneAndUpdate
-
-                // Comment.pre('remove', function(next) {
-                //     // Remove all the assignment docs that reference the removed person.
-                //     this.model('Article').remove({ comment: req.params.id }, next);
-                // });
             })
             .catch((err)=>{
                 // If an error occurs, send the err to the client
                 res.json(err);
             });
-    }    
+    },
+    // Deletes comment reference from article 'comments'
+    deleteReference: (req, res)=>{
+        db.Article.findOneAndUpdate({_id: req.params.articleId}, {$pull: {comments:req.params.commentId}})
+            .then((dbComment)=>{
+                res.json(dbComment)
+            })
+            .catch((err)=>{
+                res.json(err);
+            });
+    }
 };

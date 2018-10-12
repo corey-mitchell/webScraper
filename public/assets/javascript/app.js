@@ -80,7 +80,7 @@ $(document).ready(()=>{
                     // Create a list item for each comment in the array
                     currentComment = $(
                         `<li class='list-group-item note'>${dbComment.body}
-                        <button class='btn btn-danger comment-delete' data-id='${res}'>x</button>
+                        <button class='btn btn-danger comment-delete' data-id='${res}' data-articleId='${data._id}'>x</button>
                         </li>`
                     );
 
@@ -157,12 +157,19 @@ $(document).ready(()=>{
 
         // I am here. Need to pass comment ID into data
         // Targets comment ID
-        const id = $(this).data('id');
+        const commentId = $(this).data('id');
+        const articleId = $(this).data('articleid');
+        // console.log($(this).data('articleid'));
 
         // Sends a DELETE request
-        $.ajax(`/api/comments/${id}`, {
+        $.ajax(`/api/comments/${commentId}`, {
             type: 'DELETE'
         }).then(
+            $.ajax(`/api//commentRefence/${articleId}/${commentId}`, {
+                type: 'PUT'
+            }).then((res)=>{
+                console.log(res);
+            }),
             // Refreshes page to show changes
             // location.reload()
         );
