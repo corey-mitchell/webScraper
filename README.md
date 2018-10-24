@@ -44,4 +44,4 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/<yourDBnameh
 
 ## Author
 
-* **Corey Mitchell** - *Initial work* - (https://github.com/corey-mitchell)
+* **Corey Mitchell** - (https://github.com/corey-mitchell)
